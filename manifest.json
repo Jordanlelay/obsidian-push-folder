@@ -1,11 +1,10 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "obsidian-push-folder",
+	"name": "Push folder",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
-	"isDesktopOnly": false
+	"description": "A command to copy-and-paste one of your folders to any location outside of your Obsidian vault. I use it to keep my blog's digital garden up to date.",
+	"author": "Emma Goto",
+	"authorUrl": "https://www.emgoto.com/",
+	"isDesktopOnly": true
 }
