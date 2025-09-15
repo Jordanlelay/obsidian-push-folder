@@ -19,6 +19,8 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	destination: "",
 };
 
+const forbbidenEntries = new Set([".obsidian", ".DS_Store"]);
+
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
 
@@ -73,9 +75,10 @@ export default class MyPlugin extends Plugin {
 			const entries = await fs.promises.readdir(src, {
 				withFileTypes: true,
 			});
+			const filteredEntries = entries.filter(removeForbidenEntries);
 			await fs.promises.mkdir(dest, { recursive: true });
 
-			for (const entry of entries) {
+			for (const entry of filteredEntries) {
 				const srcPath = path.join(src, entry.name);
 				const destPath = path.join(dest, entry.name);
 
@@ -143,4 +146,11 @@ class SettingTab extends PluginSettingTab {
 					})
 			);
 	}
+}
+
+function removeForbidenEntries(entry: fs.Dirent) {
+	if (forbbidenEntries.has(entry.name)) {
+		return false;
+	}
+	return true;
 }
