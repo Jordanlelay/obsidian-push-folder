@@ -39,6 +39,17 @@ export default class MyPlugin extends Plugin {
 			},
 		});
 
+		this.addCommand({
+			id: "push-folder-command-override",
+			name: "Override folder",
+			callback: async () => {
+				await this.overrideFolderContents(
+					this.settings.folderToCopy,
+					this.settings.destination
+				);
+			},
+		});
+
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new SettingTab(this.app, this));
 	}
@@ -66,22 +77,22 @@ export default class MyPlugin extends Plugin {
 	}
 
 	async copy(src: string, dest: string) {
-			const entries = await fs.promises.readdir(src, {
-				withFileTypes: true,
-			});
-			const filteredEntries = entries.filter(removeForbidenEntries);
-			await fs.promises.mkdir(dest, { recursive: true });
+		const entries = await fs.promises.readdir(src, {
+			withFileTypes: true,
+		});
+		const filteredEntries = entries.filter(removeForbidenEntries);
+		await fs.promises.mkdir(dest, { recursive: true });
 
-			for (const entry of filteredEntries) {
-				const srcPath = path.join(src, entry.name);
-				const destPath = path.join(dest, entry.name);
+		for (const entry of filteredEntries) {
+			const srcPath = path.join(src, entry.name);
+			const destPath = path.join(dest, entry.name);
 
-				if (entry.isDirectory()) {
+			if (entry.isDirectory()) {
 				await this.copy(srcPath, destPath); // Recursively copy directories
-				} else {
-					await fs.promises.copyFile(srcPath, destPath); // Copy files
-				}
+			} else {
+				await fs.promises.copyFile(srcPath, destPath); // Copy files
 			}
+		}
 	}
 
 	async copyFolderContents(sourceFolder: string, destinationFolder: string) {
@@ -104,6 +115,37 @@ export default class MyPlugin extends Plugin {
 		} catch (error) {
 			console.error("Error copying folder:", error);
 			new Notice("Failed to copy folder. Check console for details.");
+		}
+	}
+
+	async overrideFolderContents(
+		sourceFolder: string,
+		destinationFolder: string
+	) {
+		if (!destinationFolder) {
+			new Notice("Must set destination folder");
+			return;
+		}
+
+		const override = async (src: string, dest: string) => {
+			await fs.promises.rm(dest, { recursive: true, force: true });
+			this.copy(src, dest);
+		};
+
+		try {
+			const vaultPath = this.getVaultPath();
+			if (!vaultPath) {
+				new Notice("Failed to get vault path");
+				return;
+			}
+			await override(
+				path.join(vaultPath, sourceFolder),
+				destinationFolder
+			);
+			new Notice("Folder overrided successfully!");
+		} catch (error) {
+			console.error("Error overriding folder:", error);
+			new Notice("Failed to override folder. Check console for details.");
 		}
 	}
 }
