@@ -19,7 +19,7 @@ const DEFAULT_SETTINGS: MyPluginSettings = {
 	destination: "",
 };
 
-const forbbidenEntries = new Set([".obsidian", ".DS_Store"]);
+const forbbidenEntries = new Set([".obsidian", ".DS_Store", "templates"]);
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
