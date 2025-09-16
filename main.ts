@@ -65,13 +65,7 @@ export default class MyPlugin extends Plugin {
 		return null;
 	}
 
-	async copyFolderContents(sourceFolder: string, destinationFolder: string) {
-		if (!destinationFolder) {
-			new Notice("Must set destination folder");
-			return;
-		}
-
-		const copy = async (src: string, dest: string) => {
+	async copy(src: string, dest: string) {
 			const entries = await fs.promises.readdir(src, {
 				withFileTypes: true,
 			});
@@ -83,12 +77,18 @@ export default class MyPlugin extends Plugin {
 				const destPath = path.join(dest, entry.name);
 
 				if (entry.isDirectory()) {
-					await copy(srcPath, destPath); // Recursively copy directories
+				await this.copy(srcPath, destPath); // Recursively copy directories
 				} else {
 					await fs.promises.copyFile(srcPath, destPath); // Copy files
 				}
 			}
-		};
+	}
+
+	async copyFolderContents(sourceFolder: string, destinationFolder: string) {
+		if (!destinationFolder) {
+			new Notice("Must set destination folder");
+			return;
+		}
 
 		try {
 			const vaultPath = this.getVaultPath();
@@ -96,7 +96,10 @@ export default class MyPlugin extends Plugin {
 				new Notice("Failed to get vault path");
 				return;
 			}
-			await copy(path.join(vaultPath, sourceFolder), destinationFolder);
+			await this.copy(
+				path.join(vaultPath, sourceFolder),
+				destinationFolder
+			);
 			new Notice("Folder copied successfully!");
 		} catch (error) {
 			console.error("Error copying folder:", error);
