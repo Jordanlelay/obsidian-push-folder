@@ -1,10 +1,10 @@
 {
 	"id": "obsidian-push-folder",
 	"name": "Push folder",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"minAppVersion": "0.15.0",
-	"description": "A command to copy-and-paste one of your folders to any location outside of your Obsidian vault. I use it to keep my blog's digital garden up to date.",
-	"author": "Emma Goto",
-	"authorUrl": "https://www.emgoto.com/",
+	"description": "A modified version of emgoto obsidian-push-folder. It allows to copy-paste or override a folder from your Obsidian vault.",
+	"author": "Jordan Le Lay",
+	"authorUrl": "https://github.com/Jordanlelay",
 	"isDesktopOnly": true
 }
